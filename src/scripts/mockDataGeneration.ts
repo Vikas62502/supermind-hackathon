@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { parse } from "json2csv";
+import { Request, Response } from "express";
 
 interface Post {
   id: string;
@@ -32,7 +33,8 @@ function generateMockData(numPosts: number): Post[] {
   const data: Post[] = [];
   for (let i = 0; i < numPosts; i++) {
     const post: Post = {
-      id: `post_${i + 1}`,
+      // generate id in uuvid format
+      id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
       postType: postTypes[getRandomNumber(0, postTypes.length - 1)],
       likes: getRandomNumber(10, 500),
       shares: getRandomNumber(1, 100),
@@ -50,6 +52,19 @@ function saveToJSON(data: Post[], fileName: string): void {
   console.log(`Mock data saved to JSON file: ${fileName}`);
 }
 
+// save in pdf as well
+// Save data to PDF file
+function saveToPDF(data: Post[], fileName: string): void {
+  try {
+    const pdf = parse(data);
+    fs.writeFileSync(fileName, pdf, "utf-8");
+    console.log(`Mock data saved to PDF file: ${fileName}`);
+  }
+  catch (error) {
+    console.error("Error generating PDF file:", error);
+  }
+}
+
 // Save data to CSV file
 function saveToCSV(data: Post[], fileName: string): void {
   try {
@@ -62,8 +77,9 @@ function saveToCSV(data: Post[], fileName: string): void {
 }
 
 // Main function to generate data and save to files
-function GenerateAndSave() {
-  const numPosts = 100; 
+export function GenerateAndSave(req: Request, res: Response): void {
+  const { numPosts } = req.body;
+  // const numPosts = 10000;
   const mockData = generateMockData(numPosts);
 
   // Define file names
@@ -72,6 +88,8 @@ function GenerateAndSave() {
 
   saveToJSON(mockData, jsonFileName);
   saveToCSV(mockData, csvFileName);
-}
+  saveToPDF(mockData, jsonFileName.replace(".json", ".pdf"));
 
-GenerateAndSave();
+  res.send("Mock data generated and saved to files");
+  return;
+}

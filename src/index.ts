@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import { DataAPIClient } from "@datastax/astra-db-ts";
 import { router } from "./router/router";
+import { connectToCassandra } from "./lib/cassandraDB.lib";
 
 
 dotenv.config();
@@ -26,6 +27,9 @@ console.log("Connecting to DB...")
 
 app.use(express.json());
 app.use("/api/v1", router)
+
+connectToCassandra()
+
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);

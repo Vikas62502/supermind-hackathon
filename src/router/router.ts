@@ -13,9 +13,9 @@ router.get("/test", (req, res) => {
 
 router.get("/get-stats", async (req, res) => {
     try {
-        const query = "SELECT * FROM chailytics.summary";
+        const query = "SELECT * FROM default_keyspace.media_posts";
         const result = await client.execute(query);
-        console.log(result);
+        // console.log(result);
         res.status(200).json({ data: query, result });
     } catch (error) {
         res.status(500).json({ error: error });

@@ -12,6 +12,9 @@ if (!process.env.ASTRA_DB_TOKEN) {
 
 const authProvider = new cassandra.auth.PlainTextAuthProvider('token', process.env.ASTRA_DB_TOKEN);
 
+console.log("env variables", {
+  
+})
 const client = new cassandra.Client({
   cloud: { secureConnectBundle: secureConnectBundlePath },
   credentials: { username: process.env.CLIENT_ID!, password: process.env.SECRET! },
